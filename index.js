@@ -4,49 +4,60 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-// Declare a route
-fastify.get("/", async (request, reply) => {
-  return { hello: "world" };
+// Register the plugin with options (optional)
+fastify.register(require("fastify-swagger"), {
+  exposeRoute: true,
+  routePrefix: "/docs", // required only if you are planning to call your swagger file from a different route than /swagger
+  swagger: {
+    info: { title: "Fastify-API" }, // required basic info for swagger
+  },
 });
 
-// get all users
-fastify.get(`/users`, async (req, rep) => {
-  const users = await prisma.user.findMany();
-  return users;
-});
+fastify.register(require("./routes/users")); // Start the server
 
-// register user
-fastify.post("/register", async (req, res) => {
-  const { name, email } = req.body;
+// // Declare a route
+// fastify.get("/", async (request, reply) => {
+//   return { hello: "world" };
+// });
 
-  if (!name || !email) {
-    return res.status(400).send({
-      error: "Please provide name and email", // 400 bad request error
-    });
-  }
+// // get all users
+// fastify.get(`/users`, async (req, rep) => {
+//   const users = await prisma.user.findMany();
+//   return users;
+// });
 
-  const userExists = await prisma.user.findUnique({
-    // check if user exists
-    where: {
-      email,
-    },
-  });
+// // register user
+// fastify.post("/register", async (req, res) => {
+//   const { name, email } = req.body;
 
-  if (userExists) {
-    return res.status(400).send({
-      error: "User already exists",
-    });
-  }
+//   if (!name || !email) {
+//     return res.status(400).send({
+//       error: "Please provide name and email", // 400 bad request error
+//     });
+//   }
 
-  const user = await prisma.user.create({
-    data: {
-      name,
-      email,
-    },
-  });
+//   const userExists = await prisma.user.findUnique({
+//     // check if user exists
+//     where: {
+//       email,
+//     },
+//   });
 
-  return res.send(user);
-});
+//   if (userExists) {
+//     return res.status(400).send({
+//       error: "User already exists",
+//     });
+//   }
+
+//   const user = await prisma.user.create({
+//     data: {
+//       name,
+//       email,
+//     },
+//   });
+
+//   return res.send(user);
+// });
 
 // Run the server!
 const start = async () => {
