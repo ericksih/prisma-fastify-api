@@ -15,17 +15,6 @@ fastify.register(require("fastify-swagger"), {
 
 fastify.register(require("./routes/users")); // Start the server
 
-// // Declare a route
-// fastify.get("/", async (request, reply) => {
-//   return { hello: "world" };
-// });
-
-// // get all users
-// fastify.get(`/users`, async (req, rep) => {
-//   const users = await prisma.user.findMany();
-//   return users;
-// });
-
 // // register user
 // fastify.post("/register", async (req, res) => {
 //   const { name, email } = req.body;
