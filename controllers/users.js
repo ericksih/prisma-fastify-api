@@ -1,11 +1,13 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
+// Get All Users
 const getUsers = async (request, reply) => {
   const users = await prisma.user.findMany();
   reply.send(users);
 };
 
+// create a user
 const createUser = async (req, res) => {
   const { name, email } = req.body;
 
@@ -38,4 +40,20 @@ const createUser = async (req, res) => {
   return res.send(user);
 };
 
-module.exports = { getUsers, createUser };
+// Get user by ID
+const getUser = async (req, res) => {
+  const users = await prisma.user.findMany();
+
+  const id = req.params.id;
+  const user = users.find((user) => user.id === parseInt(id));
+
+  if (!user) {
+    return res.status(404).send({
+      error: "User not found",
+    });
+  }
+
+  return res.send(user);
+};
+
+module.exports = { getUsers, createUser, getUser };

@@ -1,6 +1,4 @@
-const { getUsers, createUser } = require("../controllers/users");
-
-const fastify = require("fastify")({ logger: true });
+const { getUsers, createUser, getUser } = require("../controllers/users");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
@@ -36,12 +34,30 @@ const createUserRoutes = {
   handler: createUser,
 };
 
+const getUserByIdRoutes = {
+  schema: {
+    responese: {
+      200: {
+        type: "object",
+        properties: {
+          data: {
+            type: "array",
+          },
+        },
+      },
+    },
+  },
+  handler: getUser,
+};
+
 function userRoutes(fastify, options, next) {
   // Get all users
   fastify.get("/users", getUserRoutes);
 
   // register user
   fastify.post("/user/register", createUserRoutes);
+
+  fastify.get("/user/:id", getUserByIdRoutes);
 
   next();
 }
